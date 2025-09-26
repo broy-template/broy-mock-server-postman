@@ -1,0 +1,56 @@
+# .github/workflows/release.yml
+
+name: "Build & Release Mock Broy"
+
+# Kapan robotnya jalan? -> Setiap kali ada push ke branch 'main'
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+  # Nama pekerjaannya
+  release:
+    # Di mana robotnya kerja? -> Di 3 OS berbeda secara paralel
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    # Langkah-langkah yang harus dikerjakan
+    steps:
+      # 1. Download kode dari repositori
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Siapkan lingkungan Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Kamu bisa sesuaikan versi Node
+
+      # 3. Install semua dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Jalankan proses build dengan Electron Builder
+      - name: Build application
+        run: npm run build
+        env:
+          # Token ini diperlukan agar Electron Builder bisa mengakses GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5. Kumpulkan hasil build dan buat Rilisan di GitHub
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # Ambil file-file hasil build dari folder dist
+          files: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+          # Tandai sebagai "pre-release" atau rilis percobaan
+          prerelease: true
