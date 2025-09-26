@@ -6,11 +6,13 @@ name: "Build & Release Mock Broy"
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   # Nama pekerjaannya
   release:
+    permissions:
+      contents: write
     # Di mana robotnya kerja? -> Di 3 OS berbeda secara paralel
     runs-on: ${{ matrix.os }}
     strategy:
