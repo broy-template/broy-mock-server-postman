@@ -30,9 +30,6 @@
       "target": "nsis",
       "icon": "build/icon.ico"
     },
-    "nsis": {
-      "compression": "normal"
-    },
     "linux": {
       "target": "AppImage"
     },
