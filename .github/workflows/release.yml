@@ -2,14 +2,11 @@
 
 name: "Build & Release Mock Broy"
 
-# Kapan robotnya jalan? -> Setiap kali ada push ke branch 'main'
+# DIUBAH: Robotnya sekarang hanya jalan kalau kita nge-push tag baru
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   # Nama pekerjaannya
@@ -39,6 +36,8 @@ jobs:
       # 4. Jalankan proses build dengan Electron Builder
       - name: Build application
         run: npm run build
+        # Di Windows, gunakan bash agar pola wildcard (*) di shell bekerja konsisten
+        shell: bash
         env:
           # Token ini diperlukan agar Electron Builder bisa mengakses GitHub
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,5 +51,6 @@ jobs:
             dist/*.exe
             dist/*.dmg
             dist/*.AppImage
+            dist/*.zip
           # Tandai sebagai "pre-release" atau rilis percobaan
           prerelease: true
