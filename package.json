@@ -30,6 +30,9 @@
       "target": "nsis",
       "icon": "build/icon.ico"
     },
+    "nsis": {
+      "compression": "normal"
+    },
     "directories": {
       "output": "dist"
     }
