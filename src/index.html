@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Broy</title>
+    <style>
+        body { font-family: sans-serif; background-color: #2c3e50; color: #ecf0f1; padding: 20px; }
+        h1 { color: #3498db; }
+        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px; }
+        button:hover { background-color: #2980b9; }
+        #stopBtn { background-color: #e74c3c; }
+        #stopBtn:hover { background-color: #c0392b; }
+        .file-input { margin: 15px 0; }
+        p { background-color: #34495e; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Mock Broy</h1>
+    <p>Aplikasi untuk generate mock server dari file Postman.</p>
+
+    <div class="file-input">
+        <label>File Collection (.json):</label>
+        <button id="collectionBtn">Pilih File</button>
+        <span id="collectionPath">Tidak ada file dipilih</span>
+    </div>
+
+    <div class="file-input">
+        <label>File Environment (.json):</label>
+        <button id="envBtn">Pilih File</button>
+        <span id="envPath">Tidak ada file dipilih</span>
+    </div>
+
+    <hr>
+    <button id="startBtn">▶️ Start Server</button>
+    <button id="stopBtn">⏹️ Stop Server</button>
+
+    <h3>Status:</h3>
+    <p id="status">Server belum berjalan.</p>
+    <div id="endpoints-container"></div>
+    <script src="./renderer.js"></script>
+</body>
+</html>
