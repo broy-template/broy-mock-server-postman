@@ -8,6 +8,9 @@ let activeResponses = {};
 let envVariables = {};
 const DEFAULT_PORT = 3005;
 
+// ---- BAGIAN BARU: Wadah untuk mencatat semua koneksi aktif ----
+let activeConnections = [];
+
 function getLocalIpAddress() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
@@ -28,7 +31,7 @@ function resolveVariables(text) {
     if (!resolvedText.match(regex)) break;
     resolvedText = resolvedText.replace(
       regex,
-      (match, varName) => envVariables[varName] || match
+      (match, varName) => envVariables[varName] || ''
     );
   }
   return resolvedText;
@@ -125,6 +128,19 @@ function startServer(collectionPath, envPath, port, onLog) {
       resolve(successMessage);
     });
 
+    // ---- BAGIAN BARU: Catat setiap koneksi yang masuk ----
+    serverInstance.on('connection', (socket) => {
+      try {
+        console.log('🔌 Koneksi baru masuk!');
+      } catch (e) {}
+      activeConnections.push(socket);
+
+      // Saat koneksi ditutup, hapus dari daftar
+      socket.on('close', () => {
+        activeConnections = activeConnections.filter((conn) => conn !== socket);
+      });
+    });
+
     serverInstance.on("error", (err) => {
       reject(new Error(`Gagal memulai server: ${err.message}`));
     });
@@ -134,6 +150,17 @@ function startServer(collectionPath, envPath, port, onLog) {
 function stopServer() {
   return new Promise((resolve) => {
     if (serverInstance) {
+      // ---- BAGIAN BARU: "Usir" semua koneksi aktif sebelum menutup server ----
+      try {
+        console.log(`🔌 Menutup ${activeConnections.length} koneksi aktif...`);
+      } catch (e) {}
+      for (const socket of activeConnections) {
+        try {
+          socket.destroy();
+        } catch (e) {}
+      }
+      activeConnections = [];
+
       serverInstance.close(() => {
         serverInstance = null;
         parsedCollection = null;
